@@ -124,23 +124,30 @@ namespace ZSWind.Api
         public static List<dynamic> ToDynamicList(this DataTable dt)
         {
             List<dynamic> result = new List<dynamic>();
-            if (dt == null) return result;
-            if (dt.Rows.Count < 1) return result;
-            var columnNames = new List<string>();
-            foreach (var column in dt.Columns)
+            try
             {
-                columnNames.Add(column.ToString());
-            }
-            foreach (DataRow row in dt.Rows)
-            {
-                dynamic p = new ExpandoObject();
-                foreach (var columnName in columnNames)
+                if (dt == null) return result;
+                if (dt.Rows.Count < 1) return result;
+                var columnNames = new List<string>();
+                foreach (var column in dt.Columns)
                 {
-                    ((IDictionary<string, object>)p).Add(columnName, row.Field<dynamic>(columnName)?.ToString());
+                    columnNames.Add(column.ToString());
                 }
-                result.Add(p);
-            };
-            dt.Dispose();
+                foreach (DataRow row in dt.Rows)
+                {
+                    dynamic p = new ExpandoObject();
+                    foreach (var columnName in columnNames)
+                    {
+                        ((IDictionary<string, object>)p).Add(columnName, row.Field<dynamic>(columnName)?.ToString());
+                    }
+                    result.Add(p);
+                };
+                dt.Dispose();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("DataTable转化为dynamic列表失败", ex);
+            }
             return result;
         }
     }
