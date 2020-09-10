@@ -9,6 +9,7 @@ using System.Reflection.Emit;
 using System.Reflection;
 using System.Dynamic;
 using Microsoft.CSharp;
+using ZSFund.LogService;
 
 namespace ZSFund.Wind.Api
 {
@@ -18,32 +19,27 @@ namespace ZSFund.Wind.Api
     public static class Wind
     {
         /// <summary>
-        /// 获取WindAPI
+        /// 获取WindAPI,三次登录失败返回null
         /// </summary>
         /// <returns></returns>
         public static WindAPI GetApi()
         {
             WindAPI w = new WindAPI();
-            Login(w);
-            return w;
-        }
-
-        /// <summary>
-        /// WindApi登陆
-        /// </summary>
-        /// <param name="w"></param>
-        private static void Login(WindAPI w)
-        {
-            string strErrorMsg;
-
-            //登录WFT
-            int nRetCode = w.start();
-            if (0 != nRetCode)//登录失败
+            for (int i = 0; i < 3; i++)
             {
-                strErrorMsg = w.getErrorMsg(nRetCode);
-                throw new Exception($"登录WFT失败{strErrorMsg}");
+                //登录WFT
+                int nRetCode = w.start();
+                if (0 != nRetCode)//登录失败
+                {
+                    var strErrorMsg = w.getErrorMsg(nRetCode);
+                    Logger.Write("登录WFT失败", strErrorMsg, string.Empty, string.Empty, LogLevel.Error, 0);
+                }
+                else
+                {
+                    return w;
+                }
             }
-            return;
+            return null;
         }
 
         /// <summary>
@@ -110,7 +106,9 @@ namespace ZSFund.Wind.Api
             }
             catch (Exception ex)
             {
-                throw new Exception("Wind数据解析失败", ex);
+                sdata.Code = 1;
+                sdata.Message = "Wind数据解析失败";
+                Logger.Write("Wind数据解析失败", ex.ToString(), string.Empty, string.Empty, LogLevel.Error, 0);
             }
 
             return sdata;
@@ -146,7 +144,7 @@ namespace ZSFund.Wind.Api
             }
             catch (Exception ex)
             {
-                throw new Exception("DataTable转化为dynamic列表失败", ex);
+                Logger.Write("DataTable转化为dynamic列表失败", ex.ToString(), string.Empty, string.Empty, LogLevel.Error, 0);
             }
             return result;
         }
@@ -157,6 +155,9 @@ namespace ZSFund.Wind.Api
     /// </summary>
     public class DataResponse
     {
+        /// <summary>
+        /// 成功的话返回0
+        /// </summary>
         public int Code { get; set; }
 
         public string Message { get; set; }
