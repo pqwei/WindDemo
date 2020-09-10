@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Dynamic;
 using Microsoft.CSharp;
 
-namespace ZSWind.Api
+namespace ZSFund.Wind.Api
 {
     /// <summary>
     /// WindApi辅助类

@@ -6,12 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ZSFund.Wind.Api\ZSFund.Wind.Api.csproj" />
     <ProjectReference Include="..\ZSWind.Api\ZSWind.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="WAPIWrapperCSharp">
-      <HintPath>..\ZSWind.Api\DLL\WAPIWrapperCSharp.dll</HintPath>
+      <HintPath>..\ZSFund.Wind.Api\DLL\WAPIWrapperCSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
 

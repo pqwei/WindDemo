@@ -6,7 +6,7 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using WAPIWrapperCSharp;
-using ZSWind.Api;
+using ZSFund.Wind.Api;
 
 namespace WindDemo
 {

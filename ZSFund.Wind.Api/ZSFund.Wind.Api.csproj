@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>ZSFund.Wind.Api</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +15,12 @@
     <Reference Include="WAPIWrapperCSharp">
       <HintPath>DLL\WAPIWrapperCSharp.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DLL\WAPIWrapperCSharp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
