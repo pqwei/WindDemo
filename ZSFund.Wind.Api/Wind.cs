@@ -57,10 +57,28 @@ namespace ZSFund.Wind.Api
             {
                 if (data.errorCode == 0)
                 {
-                    var tempdata = (data.data as IEnumerable<dynamic>).ToList();
+                    List<dynamic> tempdata = null;
+                    if (data.data is JArray)
+                        tempdata = (data.data as IEnumerable<dynamic>)?.ToList();
+                    if (data.data is double[])
+                        tempdata = (data.data as double[]).Select(o => (dynamic)o)?.ToList();
+                    if (data.data is string[])
+                        tempdata = (data.data as string[]).Select(o => (dynamic)o)?.ToList();
+                    if (data.data is object[])
+                        tempdata = (data.data as object[]).Select(o => (dynamic)o)?.ToList();
+                    if (tempdata == null)
+                    {
+                        throw new Exception("WindData.data转化失败");
+                    }
+
                     var fields = data.fieldList;
                     var fieldCount = fields.Length;
+                    if (tempdata.Count < data.timeList.Length * data.codeList.Length * fieldCount)
+                    {
+                        throw new Exception("WindData.data数据不完整");
+                    }
 
+                    int index = 0;
                     foreach (var date in data.timeList)
                     {
                         for (int i = 0; i < data.codeList.Length; i++)
@@ -70,7 +88,7 @@ namespace ZSFund.Wind.Api
                             ((IDictionary<string, dynamic>)model).Add("Time", date);
                             for (int j = 0; j < fields.Length; j++)
                             {
-                                ((IDictionary<string, dynamic>)model).Add(fields[j], tempdata[i * fieldCount + j]);
+                                ((IDictionary<string, dynamic>)model).Add(fields[j], tempdata[index++]);
                             }
 
                             sdata.Data.Add(model);
@@ -94,7 +112,7 @@ namespace ZSFund.Wind.Api
             catch (Exception ex)
             {
                 sdata.Code = 1;
-                sdata.Message = "Wind数据解析失败";
+                sdata.Message = $"Wind数据解析失败{ex}";
                 Logger.Write("Wind数据解析失败", ex.ToString(), string.Empty, string.Empty, LogLevel.Error, 0);
             }
 
