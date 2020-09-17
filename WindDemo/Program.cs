@@ -34,6 +34,9 @@ namespace WindDemo
                 {
                     var model = response.Data.FirstOrDefault() as IDictionary<string, dynamic>;
                     var value = model[field];//根据字段名动态获取
+
+                    var models = response.Data.Select(o => o as IDictionary<string, dynamic>).ToList();
+                    value = models[0][field];
                 }
             }
             else
