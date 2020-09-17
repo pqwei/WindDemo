@@ -28,6 +28,13 @@ namespace WindDemo
             {
                 var result = response.Data.Select(o => new { o.Code, o.windcode, o.high })
                     .ToList();//取出需要的数据并处理
+
+                List<string> fields = new List<string> { "Code", "windcode", "high" };
+                foreach (var field in fields)
+                {
+                    var model = response.Data.FirstOrDefault() as IDictionary<string, dynamic>;
+                    var value = model[field];//根据字段名动态获取
+                }
             }
             else
             {

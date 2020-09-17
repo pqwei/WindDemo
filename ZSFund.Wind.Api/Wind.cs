@@ -84,11 +84,12 @@ namespace ZSFund.Wind.Api
                         for (int i = 0; i < data.codeList.Length; i++)
                         {
                             dynamic model = new ExpandoObject();
-                            ((IDictionary<string, dynamic>)model).Add("Code", data.codeList[i]);
-                            ((IDictionary<string, dynamic>)model).Add("Time", date);
+                            IDictionary<string, dynamic> dic = model;
+                            dic.Add("Code", data.codeList[i]);
+                            dic.Add("Time", date);
                             for (int j = 0; j < fields.Length; j++)
                             {
-                                ((IDictionary<string, dynamic>)model).Add(fields[j], tempdata[index++]);
+                                dic.Add(fields[j], tempdata[index++]);
                             }
 
                             sdata.Data.Add(model);
