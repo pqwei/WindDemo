@@ -119,41 +119,6 @@ namespace ZSFund.Wind.Api
 
             return sdata;
         }
-
-        /// <summary>
-        /// DataTable转化为dynamic列表
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
-        public static List<dynamic> ToDynamicList(this DataTable dt)
-        {
-            List<dynamic> result = new List<dynamic>();
-            try
-            {
-                if (dt == null) return result;
-                if (dt.Rows.Count < 1) return result;
-                var columnNames = new List<string>();
-                foreach (var column in dt.Columns)
-                {
-                    columnNames.Add(column.ToString());
-                }
-                foreach (DataRow row in dt.Rows)
-                {
-                    dynamic p = new ExpandoObject();
-                    foreach (var columnName in columnNames)
-                    {
-                        ((IDictionary<string, object>)p).Add(columnName, row.Field<dynamic>(columnName)?.ToString());
-                    }
-                    result.Add(p);
-                };
-                dt.Dispose();
-            }
-            catch (Exception ex)
-            {
-                Logger.Write("DataTable转化为dynamic列表失败", ex.ToString(), string.Empty, string.Empty, LogLevel.Error, 0);
-            }
-            return result;
-        }
     }
 
     /// <summary>
