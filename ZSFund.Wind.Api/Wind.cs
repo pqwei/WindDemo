@@ -49,46 +49,33 @@ namespace ZSFund.Wind.Api
         /// <returns></returns>
         public static DataResponse ConvertToSAFSData(WindData data)
         {
-            DataResponse sdata = new DataResponse();
+            DataResponse sdata = new DataResponse()
+            {
+                Data = new List<dynamic>()
+            };
             try
             {
                 if (data.errorCode == 0)
                 {
-                    string[] tempdata = new string[] { };
-                    if (data.data is JArray)
-                        tempdata = ((JArray)data.data).ToObject<string[]>().ToArray();
-                    if (data.data is double[])
-                        tempdata = (data.data as double[]).Select(o => o.ToString()).ToArray();
-                    if (data.data is string[])
-                        tempdata = (data.data as string[]).Select(o => o == null ? "" : o.ToString()).ToArray();
-                    if (data.data is object[])
-                        tempdata = (data.data as object[]).Select(o => o == null ? "" : o.ToString()).ToArray();
+                    var tempdata = (data.data as IEnumerable<dynamic>).ToList();
+                    var fields = data.fieldList;
+                    var fieldCount = fields.Length;
 
-                    DataTable dt = new DataTable();
-                    dt.TableName = "WindData";
-                    dt.Columns.Add("Code");
-                    dt.Columns.Add("Time", typeof(DateTime));
-
-                    foreach (var field in data.fieldList)
-                    {
-                        dt.Columns.Add(field);
-                    }
-
-                    var i = 0;
-                    var fieldCount = data.fieldList.Length;
                     foreach (var date in data.timeList)
                     {
-                        foreach (var code in data.codeList)
+                        for (int i = 0; i < data.codeList.Length; i++)
                         {
-                            var dataList = new List<object>() { code, date };
-                            var d = tempdata.Skip(i * fieldCount).Take(fieldCount).ToArray();
-                            dataList.AddRange(d);
-                            dt.Rows.Add(dataList.ToArray());
-                            i++;
+                            dynamic model = new ExpandoObject();
+                            ((IDictionary<string, dynamic>)model).Add("Code", data.codeList[i]);
+                            ((IDictionary<string, dynamic>)model).Add("Time", date);
+                            for (int j = 0; j < fields.Length; j++)
+                            {
+                                ((IDictionary<string, dynamic>)model).Add(fields[j], tempdata[i * fieldCount + j]);
+                            }
+
+                            sdata.Data.Add(model);
                         }
                     }
-
-                    sdata.Data = dt;
                 }
                 else if (data.data != null)
                 {
@@ -162,6 +149,6 @@ namespace ZSFund.Wind.Api
 
         public string Message { get; set; }
 
-        public DataTable Data { get; set; }
+        public List<dynamic> Data { get; set; }
     }
 }
