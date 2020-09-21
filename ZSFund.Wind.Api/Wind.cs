@@ -57,15 +57,9 @@ namespace ZSFund.Wind.Api
             {
                 if (data.errorCode == 0)
                 {
-                    List<dynamic> tempdata = null;
-                    if (data.data is JArray)
-                        tempdata = (data.data as IEnumerable<dynamic>)?.ToList();
-                    if (data.data is double[])
-                        tempdata = (data.data as double[]).Select(o => (dynamic)o)?.ToList();
-                    if (data.data is string[])
-                        tempdata = (data.data as string[]).Select(o => (dynamic)o)?.ToList();
-                    if (data.data is object[])
-                        tempdata = (data.data as object[]).Select(o => (dynamic)o)?.ToList();
+                    dynamic obj = new ExpandoObject();
+                    List<dynamic> tempdata = (data.data is Array ? ((Array)data.data).OfType<dynamic>() :
+                        ((JArray)data.data).OfType<dynamic>()).ToList();
                     if (tempdata == null)
                     {
                         throw new Exception("WindData.data转化失败");
