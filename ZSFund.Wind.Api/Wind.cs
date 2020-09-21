@@ -57,7 +57,6 @@ namespace ZSFund.Wind.Api
             {
                 if (data.errorCode == 0)
                 {
-                    dynamic obj = new ExpandoObject();
                     List<dynamic> tempdata = (data.data is Array ? ((Array)data.data).OfType<dynamic>() :
                         ((JArray)data.data).OfType<dynamic>()).ToList();
                     if (tempdata == null)
